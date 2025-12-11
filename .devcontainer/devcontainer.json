@@ -32,9 +32,5 @@
         "README.md"
       ]
     }
-  },
-
-  "mounts": [
-    "source=/var/lib/containers,target=/var/lib/containers,type=volume"
-  ]
+  }
 }

@@ -33,8 +33,8 @@ echo "Storage driver set to: vfs"
 if command -v podman &> /dev/null; then
     echo "Podman version:"
     podman --version
-    echo "Podman info:"
-    podman info --format json | grep -A 2 '"graphDriverName"' || true
+    echo "Storage driver:"
+    podman info --format '{{.Store.GraphDriverName}}' || echo "Could not retrieve storage driver"
 else
     echo "Warning: podman command not found"
 fi
