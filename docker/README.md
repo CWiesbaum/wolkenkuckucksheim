@@ -43,20 +43,26 @@ This directory contains the Docker Compose configuration for the Nextcloud stack
 
 ## Services
 
+All services include health checks to ensure proper startup order and reliability.
+
 ### Nextcloud (`app`)
 - Main application server
 - Exposed on port 8080
 - Data stored in `nextcloud_data` volume
+- Health check: HTTP status endpoint
+- Waits for database and Redis to be healthy before starting
 
 ### PostgreSQL (`db`)
 - Database backend
 - Version: PostgreSQL 16 (Alpine)
 - Data stored in `db_data` volume
+- Health check: pg_isready command
 
 ### Redis (`redis`)
 - Cache and session storage
 - Version: Redis 7 (Alpine)
 - Improves performance significantly
+- Health check: Redis ping command
 
 ## Management Commands
 
@@ -145,11 +151,32 @@ docker compose start
 
 ## Production Deployment
 
-For production use, consider:
+The current configuration uses `nextcloud:latest` for development flexibility. For production use, consider:
 
-1. **HTTPS/TLS**: Add reverse proxy (nginx, Traefik) with Let's Encrypt
-2. **Version Pinning**: Use specific image tags instead of `:latest`
+1. **Version Pinning**: Update `docker-compose.yml` to use specific tags
+   ```yaml
+   # Change from:
+   image: nextcloud:latest
+   # To specific version:
+   image: nextcloud:28.0.1
+   ```
+
+2. **HTTPS/TLS**: Add reverse proxy (nginx, Traefik) with Let's Encrypt
+
 3. **Resource Limits**: Add CPU/memory limits to services
-4. **Monitoring**: Implement health checks and monitoring
-5. **Backups**: Automated backup solution
+   ```yaml
+   deploy:
+     resources:
+       limits:
+         cpus: '2'
+         memory: 2G
+   ```
+
+4. **Monitoring**: Health checks are already configured in the compose file
+
+5. **Backups**: Implement automated backup solution for volumes
+
 6. **Updates**: Establish update and testing procedures
+   - Test updates in development environment first
+   - Review Nextcloud release notes before updating
+   - Always backup before major version updates
