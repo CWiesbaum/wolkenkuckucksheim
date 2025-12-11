@@ -42,7 +42,9 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - nextcloud_data:/var/www/html
+      - nextcloud_root:/var/www/html
+      - nextcloud_data:/var/www/html/data
+      - nextcloud_config:/var/www/html/config
     environment:
       - POSTGRES_HOST=db
       - POSTGRES_DB=nextcloud
@@ -70,7 +72,11 @@ services:
 volumes:
   db_data:
     driver: local
+  nextcloud_root:
+    driver: local
   nextcloud_data:
+    driver: local
+  nextcloud_config:
     driver: local
 
 networks:
