@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: nextcloud-db
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - nextcloud_network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: nextcloud-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      - nextcloud_network
+
+  # Nextcloud Application
+  app:
+    image: nextcloud:latest
+    container_name: nextcloud-app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - nextcloud_data:/var/www/html
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_HOST_PASSWORD=${REDIS_PASSWORD}
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+      - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_TRUSTED_DOMAINS}
+    depends_on:
+      - db
+      - redis
+    networks:
+      - nextcloud_network
+
+volumes:
+  db_data:
+    driver: local
+  nextcloud_data:
+    driver: local
+
+networks:
+  nextcloud_network:
+    driver: bridge
