@@ -1,6 +1,6 @@
 services:
   # PostgreSQL Database
-  db:
+  nextcloud-db:
     image: postgres:16-alpine
     container_name: nextcloud-db
     restart: unless-stopped
@@ -19,7 +19,7 @@ services:
       retries: 5
 
   # Redis Cache
-  redis:
+  nextcloud-redis:
     image: redis:7-alpine
     container_name: nextcloud-redis
     restart: unless-stopped
@@ -35,30 +35,30 @@ services:
   # Nextcloud Application
   # NOTE: Using 'latest' tag for development flexibility
   # For production, pin to specific version (e.g., nextcloud:28)
-  app:
+  nextcloud-app:
     image: nextcloud:latest
     container_name: nextcloud-app
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - 9090:80
     volumes:
       - nextcloud_root:/var/www/html
       - nextcloud_data:/var/www/html/data
       - nextcloud_config:/var/www/html/config
     environment:
-      - POSTGRES_HOST=db
+      - POSTGRES_HOST=nextcloud-db
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - REDIS_HOST=redis
+      - REDIS_HOST=nextcloud-redis
       - REDIS_HOST_PASSWORD=${REDIS_PASSWORD}
       - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
       - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_TRUSTED_DOMAINS}
     depends_on:
-      db:
+      nextcloud-db:
         condition: service_healthy
-      redis:
+      nextcloud-redis:
         condition: service_healthy
     networks:
       - nextcloud_network
