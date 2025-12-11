@@ -9,7 +9,7 @@ This document provides guidance for AI agents working on the Wolkenkuckucksheim 
 This project uses a devcontainer for consistent development environments. The devcontainer configuration is located in `.devcontainer/devcontainer.json`.
 
 **Key features:**
-- **Base Image**: Ubuntu (latest)
+- **Base Image**: Ubuntu 24.04 LTS
 - **Primary User**: `vscode` (UID 1000, GID 1000)
 - **Shell**: Zsh with Oh My Zsh installed
 - **GitHub Codespaces**: Fully compatible and tested

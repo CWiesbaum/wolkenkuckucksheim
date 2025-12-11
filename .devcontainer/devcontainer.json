@@ -1,6 +1,6 @@
 {
   "name": "Wolkenkuckucksheim Development",
-  "image": "ubuntu:latest",
+  "image": "ubuntu:24.04",
   
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {

@@ -34,7 +34,7 @@ if command -v podman &> /dev/null; then
     echo "Podman version:"
     podman --version
     echo "Storage driver:"
-    podman info --format '{{.Store.GraphDriverName}}' || echo "Could not retrieve storage driver"
+    podman info --format '{{.Store.GraphDriverName}}' 2>/dev/null || echo "Could not retrieve storage driver. Podman may need to initialize storage. Try running: podman system reset"
 else
-    echo "Warning: podman command not found"
+    echo "Warning: podman command not found. Installation may have failed."
 fi
